@@ -3,6 +3,7 @@ using System;
 using CMS.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CMS.Persistence.Migrations
 {
     [DbContext(typeof(CmsDbContext))]
-    partial class CmsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230406050229_mig_1")]
+    partial class mig_1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -115,60 +117,16 @@ namespace CMS.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("AwayTeamScore")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("HomeTeamScore")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Stadium")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid?>("TeamId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("WeekId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("awayTeamId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("createdTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("homeTeamId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("updatedTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("WeekId");
-
-                    b.HasIndex("awayTeamId");
-
-                    b.HasIndex("homeTeamId");
-
-                    b.ToTable("Games");
-                });
-
-            modelBuilder.Entity("Domain.Entities.GameMembership", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsHomeTeam")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("TeamId")
-                        .HasColumnType("uuid");
-
                     b.Property<DateTime>("createdTime")
                         .HasColumnType("timestamp with time zone");
 
@@ -176,12 +134,12 @@ namespace CMS.Persistence.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GameId");
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("GameMemberships");
+                    b.HasIndex("WeekId");
+
+                    b.ToTable("Game");
                 });
 
             modelBuilder.Entity("Domain.Entities.Patient", b =>
@@ -275,7 +233,7 @@ namespace CMS.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Seasons");
+                    b.ToTable("Season");
                 });
 
             modelBuilder.Entity("Domain.Entities.Team", b =>
@@ -326,53 +284,22 @@ namespace CMS.Persistence.Migrations
 
                     b.HasIndex("SeasonId");
 
-                    b.ToTable("Weeks");
+                    b.ToTable("Week");
                 });
 
             modelBuilder.Entity("Domain.Entities.Game", b =>
                 {
+                    b.HasOne("Domain.Entities.Team", null)
+                        .WithMany("Games")
+                        .HasForeignKey("TeamId");
+
                     b.HasOne("Domain.Entities.Week", "Week")
                         .WithMany()
                         .HasForeignKey("WeekId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Team", "AwayTeam")
-                        .WithMany()
-                        .HasForeignKey("awayTeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Team", "HomeTeam")
-                        .WithMany()
-                        .HasForeignKey("homeTeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AwayTeam");
-
-                    b.Navigation("HomeTeam");
-
                     b.Navigation("Week");
-                });
-
-            modelBuilder.Entity("Domain.Entities.GameMembership", b =>
-                {
-                    b.HasOne("Domain.Entities.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Team", "Team")
-                        .WithMany("GameMemberships")
-                        .HasForeignKey("TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-
-                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("Domain.Entities.Player", b =>
@@ -404,7 +331,7 @@ namespace CMS.Persistence.Migrations
 
             modelBuilder.Entity("Domain.Entities.Team", b =>
                 {
-                    b.Navigation("GameMemberships");
+                    b.Navigation("Games");
 
                     b.Navigation("Players");
                 });

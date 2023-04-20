@@ -2,12 +2,20 @@
 using Application.Abstraction.AbsAppointment;
 using Application.Abstraction.AbsContent;
 using Application.Abstraction.AbsDoctor;
+using Application.Abstraction.AbsGame;
+using Application.Abstraction.AbsGameMembership;
 using Application.Abstraction.AbsPatient;
+using Application.Abstraction.AbsPlayer;
+using Application.Abstraction.AbsTeam;
 using CMS.Persistence.Concrete;
 using CMS.Persistence.Concrete.ConAppointment;
 using CMS.Persistence.Concrete.ConContent;
 using CMS.Persistence.Concrete.ConDoctor;
+using CMS.Persistence.Concrete.ConGame;
+using CMS.Persistence.Concrete.ConGameMembership;
 using CMS.Persistence.Concrete.ConPatient;
+using CMS.Persistence.Concrete.ConPlayer;
+using CMS.Persistence.Concrete.ConTeam;
 using CMS.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +49,18 @@ namespace CMS.Persistence
 
             service.AddScoped<IContentReadRepository, ContentReadRepository>();
             service.AddScoped<IContentWriteRepository, ContentWriteRepository>();
+
+            service.AddScoped<ITeamReadRepository, TeamReadRepository>();
+            service.AddScoped<ITeamWriteRepository, TeamWriteRepository>();
+
+            service.AddScoped<IPlayerReadRepository, PlayerReadRepository>();
+            service.AddScoped<IPlayerWriteRepository, PlayerWriteRepository>();
+
+            service.AddScoped<IGameReadRepository, GameReadRepository>();
+            service.AddScoped<IGameWriteRepository, GameWriteRepository>();
+
+            service.AddScoped<IGameMembershipReadRepository, GameMembershipReadRepository>();
+            service.AddScoped<IGameMembershipWriteRepository, GameMembershipWriteRepository>();
 
         }
     }
